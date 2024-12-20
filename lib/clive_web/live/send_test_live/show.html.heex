@@ -1,0 +1,27 @@
+<.header>
+  Send test <%= @send_test.id %>
+  <:subtitle>This is a send_test record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/send_tests/#{@send_test}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit send_test</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Address"><%= @send_test.address %></:item>
+  <:item title="Amount"><%= @send_test.amount %></:item>
+</.list>
+
+<.back navigate={~p"/send_tests"}>Back to send_tests</.back>
+
+<.modal :if={@live_action == :edit} id="send_test-modal" show on_cancel={JS.patch(~p"/send_tests/#{@send_test}")}>
+  <.live_component
+    module={CliveWeb.SendTestLive.FormComponent}
+    id={@send_test.id}
+    title={@page_title}
+    action={@live_action}
+    send_test={@send_test}
+    patch={~p"/send_tests/#{@send_test}"}
+  />
+</.modal>
