@@ -1,31 +1,32 @@
 
-import { NetworkType, Wallet } from '@cardano-foundation/cardano-connect-with-wallet-core';
+// import { NetworkType, Wallet } from '@cardano-foundation/cardano-connect-with-wallet-core';
 
-import { getWallet, getBalance, bech32FromHex, getTransactionBuilder, getTransactionUnpentOutputs } from './wallet'
+import { getWallet, getBalance, getBalanceByName, bech32FromHex, getTransactionBuilder, getTransactionUnpentOutputs } from './wallet'
 import * as SerializationLib from '@emurgo/cardano-serialization-lib-browser'
-import { decode as decodeCbor } from 'cborg';
+// import { decode as decodeCbor } from 'cborg';
 import { Buffer } from 'buffer';
 
-export function subscribeBalance(sub: (value: number) => void) {
-    Wallet.accountBalanceObserver.subscribe(sub)
+// export function subscribeBalance(sub: (value: number) => void) {
+//     // Wallet.accountBalanceObserver.subscribe(sub)
+// }
+
+// export async function connectToWallet(name: string, network: NetworkType): Promise<number> {
+//     // Wallet.connectToWallet(name, network)
+//     // return Wallet.accountBalanceObserver.value
+// }
+
+// export function disconnect() {
+//     // Wallet.disconnect();
+// }
+
+export async function balance(): Promise<number> {
+
+    return getBalanceByName("nami")
 }
 
-export async function connectToWallet(name: string, network: NetworkType): Promise<number> {
-    Wallet.connectToWallet(name, network)
-    return Wallet.accountBalanceObserver.value
-}
-
-export function disconnect() {
-    Wallet.disconnect();
-}
-
-export function balance(): number {
-    return Wallet.accountBalanceObserver.value
-}
-
-export function sign(message: string, onSignMessage?: (signature: string, key: string | undefined) => void, onSignError?: (error: Error) => void, limitNetwork?: NetworkType): Promise<void> {
-    return Wallet.signMessage(message, onSignMessage, onSignError, limitNetwork);
-}
+// export function sign(message: string, onSignMessage?: (signature: string, key: string | undefined) => void, onSignError?: (error: Error) => void, limitNetwork?: NetworkType): Promise<void> {
+// return Wallet.signMessage(message, onSignMessage, onSignError, limitNetwork);
+// }
 
 // export async function sendLovelace(addr: string, amount: string) {
 

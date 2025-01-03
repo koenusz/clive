@@ -21,9 +21,70 @@ import "phoenix_html"
 import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar.cjs"
+import { hello, sendLovelace, getBalanceByName, getInstalledWalletExtensions } from "../ts/main"
+
+
+let Hooks = {}
+Hooks.SendL = {
+  mounted() {
+    this.el.addEventListener("click", e => {
+      sendLovelace(this.el.dataset.address, this.el.dataset.amount)
+    })
+  }
+}
+
+Hooks.Connect = {
+  wallet() { return this.el.dataset.wallet },
+  mounted() {
+    this.el.addEventListener("click", async e => {
+      console.log(this.wallet())
+      const balance = await getBalanceByName(this.wallet())
+
+      // subscribeBalance(balance => {
+      //   console.log(balance)
+      //   this.pushEvent("balance", balance)
+      // })
+      console.log("balance", balance)
+
+      this.pushEvent("connected", { wallet: this.wallet(), balance: balance })
+    })
+  }
+}
+
+Hooks.Balance = {
+  mounted() {
+    this.el.addEventListener("click", e => {
+      console.log(e)
+      this.pushEvent("balance", balance())
+    })
+  }
+}
+
+Hooks.Wallets = {
+  mounted() {
+    this.el.addEventListener("click", e => {
+      const wallets = getInstalledWalletExtensions()
+      console.log(wallets)
+      this.pushEvent("wallets", wallets)
+    })
+  }
+}
+
+Hooks.Hello = {
+  mounted() {
+    this.el.addEventListener("click", e => {
+      const h = hello();
+      console.log("received event")
+      console.log(h);
+      this.pushEvent("hello", h)
+    })
+  }
+}
+
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
+  hooks: Hooks,
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken }
 })
@@ -44,7 +105,7 @@ window.liveSocket = liveSocket
 
 
 // Allows to execute JS commands from the server
-window.addEventListener("phx:js-exec", ({detail}) => {
+window.addEventListener("phx:js-exec", ({ detail }) => {
   document.querySelectorAll(detail.to).forEach(el => {
     liveSocket.execJS(el, el.getAttribute(detail.attr))
   })

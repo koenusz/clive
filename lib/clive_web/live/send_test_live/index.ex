@@ -8,6 +8,13 @@ defmodule CliveWeb.SendTestLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    socket =
+      socket
+      |> assign(:hello, "hello from elixir")
+      |> assign(:wallets, [])
+      |> assign(:connected, nil)
+      |> assign(:balance, 0)
+
     {:ok, stream(socket, :send_tests, Transaction.list_send_tests())}
   end
 
@@ -45,5 +52,41 @@ defmodule CliveWeb.SendTestLive.Index do
     {:ok, _} = Transaction.delete_send_test(send_test)
 
     {:noreply, stream_delete(socket, :send_tests, send_test)}
+  end
+
+  @impl true
+  def handle_event("hello", msg, socket) do
+    socket = assign(socket, hello: msg)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("wallets", wallets, socket) do
+    mapped =
+      Enum.map(wallets, fn %{"name" => name, "icon" => icon} -> %{name: name, icon: icon} end)
+
+    socket = assign(socket, wallets: mapped)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("balance", amount, socket) do
+    socket = assign(socket, balance: amount)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("connected", %{"wallet" => wallet, "balance" => balance}, socket) do
+    connectedWallet =
+      socket.assigns.wallets
+      |> Enum.find(fn %{name: name} -> name == wallet end)
+
+    socket =
+      socket
+      |> assign(connected: connectedWallet)
+      |> assign(wallets: [])
+      |> assign(balance: balance)
+
+    {:noreply, socket}
   end
 end
