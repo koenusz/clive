@@ -4,6 +4,8 @@ defmodule CliveWeb.SendTestLive.Index do
   alias Clive.Transaction
   alias Clive.Transaction.SendTest
 
+  import CliveWeb.WalletComponents
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok, stream(socket, :send_tests, Transaction.list_send_tests())}

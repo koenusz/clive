@@ -17,7 +17,8 @@ defmodule Clive.Application do
       # Start a worker by calling: Clive.Worker.start_link(arg)
       # {Clive.Worker, arg},
       # Start to serve requests, typically the last entry
-      CliveWeb.Endpoint
+      CliveWeb.Endpoint,
+      TwMerge.Cache
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

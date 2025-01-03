@@ -7,13 +7,15 @@
   </:actions>
 </.header>
 
+<.wallet />
+
 <.table
   id="send_tests"
   rows={@streams.send_tests}
   row_click={fn {_id, send_test} -> JS.navigate(~p"/send_tests/#{send_test}") end}
 >
-  <:col :let={{_id, send_test}} label="Address"><%= send_test.address %></:col>
-  <:col :let={{_id, send_test}} label="Amount"><%= send_test.amount %></:col>
+  <:col :let={{_id, send_test}} label="Address">{send_test.address}</:col>
+  <:col :let={{_id, send_test}} label="Amount">{send_test.amount}</:col>
   <:action :let={{_id, send_test}}>
     <div class="sr-only">
       <.link navigate={~p"/send_tests/#{send_test}"}>Show</.link>
@@ -30,7 +32,12 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="send_test-modal" show on_cancel={JS.patch(~p"/send_tests")}>
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="send_test-modal"
+  show
+  on_cancel={JS.patch(~p"/send_tests")}
+>
   <.live_component
     module={CliveWeb.SendTestLive.FormComponent}
     id={@send_test.id || :new}

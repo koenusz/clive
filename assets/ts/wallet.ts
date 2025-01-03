@@ -37,10 +37,8 @@ export async function getTransactionUnpentOutputs(wallet: Cip30WalletApiWithPoss
     if (utxosHex == null) {
         return outputs
     }
-    const utxos = utxosHex.map((utxoHex: string) => {
-        return SerializationLib.TransactionUnspentOutput.from_bytes(Buffer.from(utxoHex, 'hex'));
-    });
-    utxos.forEach((utxo) => {
+    utxosHex.forEach((hex) => {
+        let utxo = SerializationLib.TransactionUnspentOutput.from_bytes(Buffer.from(hex, 'hex'));
         const input = utxo.input();
         const amount = utxo.output().amount();
         const lovelace = amount.coin().to_str(); // Gets the amount in lovelace
@@ -52,6 +50,7 @@ export async function getTransactionUnpentOutputs(wallet: Cip30WalletApiWithPoss
 
     return outputs
 }
+
 
 export function getInstalledWalletExtensions(
     supportedWallets?: Array<string>
