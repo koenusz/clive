@@ -13,6 +13,7 @@ defmodule CliveWeb.SendTestLive.Index do
       |> assign(:hello, "hello from elixir")
       |> assign(:wallets, [])
       |> assign(:connected, nil)
+      |> assign(:selected, nil)
       |> assign(:balance, 0)
 
     {:ok, stream(socket, :send_tests, Transaction.list_send_tests())}
@@ -86,6 +87,16 @@ defmodule CliveWeb.SendTestLive.Index do
       |> assign(connected: connectedWallet)
       |> assign(wallets: [])
       |> assign(balance: balance)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("select", %{"address" => address, "amount" => amount}, socket) do
+    selected = %{address: address, amount: amount}
+
+    socket =
+      socket
+      |> assign(selected: selected)
 
     {:noreply, socket}
   end

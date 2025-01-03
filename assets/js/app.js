@@ -25,10 +25,12 @@ import { hello, sendLovelace, getBalanceByName, getInstalledWalletExtensions } f
 
 
 let Hooks = {}
+
 Hooks.SendL = {
   mounted() {
     this.el.addEventListener("click", e => {
-      sendLovelace(this.el.dataset.address, this.el.dataset.amount)
+      console.log("wallet", this.el.dataset)
+      sendLovelace(this.el.dataset.wallet, this.el.dataset.address, this.el.dataset.amount)
     })
   }
 }
@@ -39,11 +41,6 @@ Hooks.Connect = {
     this.el.addEventListener("click", async e => {
       console.log(this.wallet())
       const balance = await getBalanceByName(this.wallet())
-
-      // subscribeBalance(balance => {
-      //   console.log(balance)
-      //   this.pushEvent("balance", balance)
-      // })
       console.log("balance", balance)
 
       this.pushEvent("connected", { wallet: this.wallet(), balance: balance })
@@ -103,6 +100,32 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+
+window.addEventListener("phx:live_reload:attached", ({ detail: reloader }) => {
+  // Enable server log streaming to client. Disable with reloader.disableServerLogs()
+  reloader.enableServerLogs()
+
+  // Open configured PLUG_EDITOR at file:line of the clicked element's HEEx component
+  //
+  //   * click with "Alt" key pressed to open at caller location
+  //   * click with "Shift" key pressed to open at function component definition location
+  let keyDown
+  window.addEventListener("keydown", e => keyDown = e.key)
+  window.addEventListener("keyup", e => keyDown = null)
+  window.addEventListener("click", e => {
+    console.log("key", keyDown)
+    if (keyDown === "Alt") {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      reloader.openEditorAtCaller(e.target)
+    } else if (keyDown === "Shift") {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      reloader.openEditorAtDef(e.target)
+    }
+  }, true)
+  window.liveReloader = reloader
+})
 
 // Allows to execute JS commands from the server
 window.addEventListener("phx:js-exec", ({ detail }) => {

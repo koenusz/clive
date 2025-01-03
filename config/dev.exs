@@ -60,7 +60,8 @@ config :clive, CliveWeb.Endpoint,
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/clive_web/(controllers|live|components)/.*(ex|heex)$"
-    ]
+    ],
+    web_console_logger: true
   ]
 
 # Enable dev routes for dashboard and mailbox

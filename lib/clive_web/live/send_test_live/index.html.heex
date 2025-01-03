@@ -10,9 +10,23 @@
 <.wallet wallets={@wallets} wallet={@connected} />
 
 <.balance balance={@balance} />
+<div :if={@connected}>{@connected.name}</div>
+<div :if={@selected}>{@selected.address}</div>
+
+<.button
+  :if={@connected && @selected}
+  id="send"
+  phx-hook="SendL"
+  data-wallet={@connected.name}
+  data-address={@selected.address}
+  data-amount={@selected.amount}
+  data-confirm="Are you sure?"
+>
+  Send
+</.button>
 
 <.table
-  id="send_tests"
+  id="send_test"
   rows={@streams.send_tests}
   row_click={fn {_id, send_test} -> JS.navigate(~p"/send_tests/#{send_test}") end}
 >
@@ -30,6 +44,18 @@
       data-confirm="Are you sure?"
     >
       Delete
+    </.link>
+  </:action>
+  <:action :let={{id, send_test}}>
+    <.link
+      id={"#{id}-select"}
+      phx-click={
+        JS.push("select", value: %{amount: send_test.amount, address: send_test.address})
+      }
+      data-address={send_test.address}
+      data-amount={send_test.amount}
+    >
+      Select
     </.link>
   </:action>
 </.table>
